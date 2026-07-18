@@ -16,7 +16,7 @@ class BitcoinExchange
 {
 	private:
 		std::ifstream					_inputFile;
-		std::map<std::string, float>	_dataBaseMap;
+		std::map<std::string, double>	_dataBaseMap;
 
 	public:
 	//orthodox

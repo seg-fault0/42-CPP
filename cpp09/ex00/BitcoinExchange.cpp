@@ -4,10 +4,10 @@
 /************     HELPER     ************/
 /****************************************/
 
-float	ft_atof(const std::string& str)
+double	ft_atod(const std::string& str)
 {
 	std::stringstream ss(str);
-	float ret;
+	double ret;
 
 	ss >> ret;
 	return (ret);
@@ -46,18 +46,18 @@ void BitcoinExchange::init(const std::string& file)
 		throw(FileNotOpen());
 
 	//read && map line
-	std::string	line;
+	std::string			line, date, rate;
+	std::stringstream	ss;
+
 	while (std::getline(dataBaseFile, line))
 	{
-		std::stringstream ss(line);
-
-		std::string date;
-		std::string rate;
+		ss.clear();
+		ss << line;
 
 		std::getline(ss, date, ',');
 		std::getline(ss, rate);
 
-		_dataBaseMap[date] = ft_atof(rate.c_str());
+		_dataBaseMap[date] = ft_atod(rate.c_str());
 	}
 
 	//close
@@ -66,7 +66,7 @@ void BitcoinExchange::init(const std::string& file)
 
 void BitcoinExchange::lunch(void)
 {
-	std::map<std::string, float>::iterator it;
+	std::map<std::string, double>::iterator it;
 	it = _dataBaseMap.begin();
 
 	while(it != _dataBaseMap.end())

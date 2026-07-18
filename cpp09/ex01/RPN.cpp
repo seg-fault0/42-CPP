@@ -56,7 +56,7 @@ RPN::RPN(const RPN& other) { *this = other; }
 
 RPN& RPN::operator=(const RPN& other) 
 {
-	if (this != &other);
+	(void) other;
 	return (*this);
 }
 

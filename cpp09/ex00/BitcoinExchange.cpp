@@ -25,9 +25,13 @@ BitcoinExchange::~BitcoinExchange()
 		_inputFile.close();
 }
 
-BitcoinExchange::BitcoinExchange(const BitcoinExchange& other) { *this = other;}
+BitcoinExchange::BitcoinExchange(const BitcoinExchange& other) { *this = other; }
 
-BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& other) { return (*this); }
+BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& other) 
+{
+	(void) other;
+	return (*this);
+}
 
 /****************************************/
 /************    METHODS     ************/
@@ -66,13 +70,60 @@ void BitcoinExchange::init(const std::string& file)
 
 void BitcoinExchange::lunch(void)
 {
-	std::map<std::string, double>::iterator it;
-	it = _dataBaseMap.begin();
+	std::string			line, date, balance;
+	std::stringstream	ss;
 
-	while(it != _dataBaseMap.end())
+	//skip first line
+	std::getline(_inputFile, line);
+
+	//read inputFile and print
+	while (std::getline(_inputFile, line))
 	{
-		std::cout << it->first << " | " << it->second << std::endl;
-		it++;
+		std::stringstream ss(line);
+
+		if (!std::getline(ss, date, '|'))
+		{
+			std::cerr << "Error: bad input => " << line << std::endl;
+			continue;
+		}
+
+		//remove the space
+		date.erase(date.size() - 1);
+
+		//balance not found
+		if (!std::getline(ss, balance))
+		{
+			std::cerr << "Error: bad input => " << line << std::endl;
+			continue;
+		}
+
+		//check balance size
+		if (ft_atod(balance) < MIN_BLANACE || ft_atod(balance) > MAX_BALANCE)
+		{
+			if (ft_atod(balance) < MIN_BLANACE)
+				std::cerr << "Error: not a positive number." << std::endl;
+			else
+				std::cerr << "Error: too large a number." << std::endl;
+			continue;
+		}
+
+		//check if there's is a cur/before date in database
+		mapit it = _dataBaseMap.lower_bound(date);
+		if (it == _dataBaseMap.end() || it->first != date)
+		{
+			if (it == _dataBaseMap.begin())
+			{
+				std::cerr << "Error: bad input => " << date << std::endl;
+				continue;
+			}
+			--it;
+		}
+
+		//print
+		std::cout << date << " => "
+				<< ft_atod(balance) << " = "
+				<< it->second * ft_atod(balance)
+				<< std::endl;
 	}
 }
 
@@ -82,5 +133,5 @@ void BitcoinExchange::lunch(void)
 
 const char* BitcoinExchange::FileNotOpen::what() const throw()
 {
-	return ("Failed to open file");
+	return ("Error: could not open file.");
 }

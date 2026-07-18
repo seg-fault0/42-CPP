@@ -1,12 +1,12 @@
-SRCS =	main.cpp			\
-		BitcoinExchange.cpp	\
+SRCS =	main.cpp	\
+		RPN.cpp		\
 
-HEADER = BitcoinExchange.hpp	\
+HEADER = RPN.hpp	\
 
-NAME = btc
+NAME = RPN
 
 CC = c++
-FLAGS = -std=c++98 -Wall -Wextra -Werror
+FLAGS = -std=c++98 #-Wall -Wextra -Werror
 OBJS = $(SRCS:.cpp=.o)
 
 all: $(NAME)

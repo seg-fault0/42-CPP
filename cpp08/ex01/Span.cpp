@@ -53,7 +53,7 @@ int	Span::shortestSpan()
 	std::sort(buffer.begin(), buffer.end());
 	
 	int dif = buffer[1] - buffer[0];
-	for(unsigned int i = 0; i < N - 1; i++)
+	for(unsigned int i = 0; i < buffer.size() - 1; i++)
 	{
 		if (dif > (buffer[i + 1] - buffer[i]))
 			dif = buffer[i + 1] - buffer[i];

@@ -124,28 +124,16 @@ void PmergeMe::merge(size_t left, size_t mid, size_t right)
 	while (i < mid && j < right)
 	{
 		if (_elements[i].second < _elements[j].second)
-		{
-			tmp.push_back(_elements[i]);
-			i++;
-		}
+			tmp.push_back(_elements[i++]);
 		else
-		{
-			tmp.push_back(_elements[j]);
-			j++;
-		}
+			tmp.push_back(_elements[j++]);
 	}
 
 	while (i < mid)
-	{
-		tmp.push_back(_elements[i]);
-		i++;
-	}
+		tmp.push_back(_elements[i++]);
 
 	while (j < right)
-	{
-		tmp.push_back(_elements[j]);
-		j++;
-	}
+		tmp.push_back(_elements[j++]);
 
 	for (size_t k = 0; k < tmp.size(); k++)
 		_elements[left + k] = tmp[k];

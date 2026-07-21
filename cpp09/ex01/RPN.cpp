@@ -68,6 +68,9 @@ void	RPN::init(const std::string& arg)
 {
 	bool	lock = false;
 
+	if (arg.empty())
+		throw(ERROR());
+
 	for(size_t i = 0; i < arg.length(); i++)
 	{
 		if (!lock && (std::isdigit(arg[i]) || isop(arg[i])))

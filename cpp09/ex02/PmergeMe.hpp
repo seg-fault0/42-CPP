@@ -63,18 +63,17 @@ class PmergeMe
 /***********     HELPERS     **************/
 /******************************************/
 
-template <typename PairContainer, typename IntContainer>
-int ft_atoi(const std::string& str)
+inline int ft_atoi(const std::string& str)
 {
 	std::stringstream ss(str);
 	long long n;
 	char c;
 
 	if (!(ss >> n) || (ss >> c))
-		throw(typename PmergeMe<PairContainer, IntContainer>::BadInput());
+		throw(std::runtime_error("Error : bad input"));
 
 	if (n < 0 || n > INT_MAX)
-		throw(typename PmergeMe<PairContainer, IntContainer>::BadNumberRange());
+		throw(std::runtime_error("Error : bad input"));
 
 	return (static_cast<int>(n));
 }
@@ -146,6 +145,8 @@ PmergeMe<PairContainer, IntContainer>& PmergeMe<PairContainer, IntContainer>::op
 		_pend = other._pend;
 		_hasStraggler = other._hasStraggler;
 		_straggler = other._straggler;
+		_before = other._before;
+		_time = other._time;
 	}
 	return (*this);
 }
@@ -247,7 +248,11 @@ void PmergeMe<PairContainer, IntContainer>::swap_sortPairs()
 	for (size_t i = 0; i < _elements.size(); i++)
 	{
 		if (_elements[i].first > _elements[i].second)
-			std::swap(_elements[i].first, _elements[i].second);
+		{
+			int	tmp = _elements[i].first;
+			_elements[i].first = _elements[i].second;
+			_elements[i].second = tmp;
+		}
 	}
 }
 
@@ -278,21 +283,21 @@ void PmergeMe<PairContainer, IntContainer>::init(int ac, char** av)
 		std::stringstream ss(av[i]);
 		std::string line;
 
-		while (getline(ss, line, ' '))
+		while (std::getline(ss, line, ' '))
 		{
 			if (line.empty())
 				continue;
 
 			if (!lock)
 			{
-				pair.first = ft_atoi<PairContainer, IntContainer>(line);
+				pair.first = ft_atoi(line);
 				_before += line;
 				_before += " ";
 				lock = true;
 			}
 			else
 			{
-				pair.second =ft_atoi<PairContainer, IntContainer>(line);
+				pair.second = ft_atoi(line);
 				_before += line;
 				_before += " ";
 				_elements.push_back(pair);

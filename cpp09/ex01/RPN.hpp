@@ -15,7 +15,7 @@
 class RPN
 {
 	private:
-		std::stringstream	_expretion;
+		std::stringstream	_expression;
 		std::stack<int>		_stack;
 
 	public:

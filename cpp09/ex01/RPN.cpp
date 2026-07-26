@@ -80,7 +80,7 @@ void	RPN::init(const std::string& arg)
 		else
 			throw (ERROR());
 	}
-	_expretion << arg;
+	_expression << arg;
 }
 
 void	RPN::lunch(void)
@@ -88,7 +88,7 @@ void	RPN::lunch(void)
 	std::string	line;
 	int			a, b;
 
-	while (std::getline(_expretion, line, ' '))
+	while (std::getline(_expression, line, ' '))
 	{
 		if (!isop(line))
 			_stack.push(ft_atoi(line));
@@ -104,7 +104,11 @@ void	RPN::lunch(void)
 			else if (line == "*")
 				_stack.push(b * a);
 			else if (line == "/")
+			{
+				if (a == 0)
+					throw (ERROR());
 				_stack.push(b / a);
+			}
 		}
 	}
 

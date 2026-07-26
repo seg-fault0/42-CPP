@@ -101,10 +101,10 @@ void	RPN::lunch(void)
 				_stack.push(b + a);
 			else if (line == "-")
 				_stack.push(b - a);
-			else if (line == "/")
-				_stack.push(b / a);
 			else if (line == "*")
 				_stack.push(b * a);
+			else if (line == "/")
+				_stack.push(b / a);
 		}
 	}
 

@@ -9,6 +9,9 @@ double	ft_atod(const std::string& str)
 	std::stringstream ss(str);
 	double ret;
 
+	if (ss.fail() || !ss.eof())
+		throw (std::runtime_error("Invalid number"));
+
 	ss >> ret;
 	return (ret);
 }
@@ -29,7 +32,10 @@ BitcoinExchange::BitcoinExchange(const BitcoinExchange& other) { *this = other; 
 
 BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& other) 
 {
-	(void) other;
+	if (this != &other)
+	{
+        _dataBaseMap = other._dataBaseMap;
+	}
 	return (*this);
 }
 
@@ -49,17 +55,19 @@ void BitcoinExchange::init(const std::string& file)
 	if (!dataBaseFile.is_open())
 		throw(FileNotOpen());
 
+
 	//read && map line
 	std::string			line, date, rate;
-	std::stringstream	ss;
+
+	// skip header
+    std::getline(dataBaseFile, line);
 
 	while (std::getline(dataBaseFile, line))
 	{
-		ss.clear();
-		ss << line;
+		std::stringstream ss(line);
 
-		std::getline(ss, date, ',');
-		std::getline(ss, rate);
+		if (!std::getline(ss, date, ',') || !std::getline(ss, rate))
+            continue;
 
 		_dataBaseMap[date] = ft_atod(rate.c_str());
 	}
@@ -71,7 +79,6 @@ void BitcoinExchange::init(const std::string& file)
 void BitcoinExchange::lunch(void)
 {
 	std::string			line, date, balance;
-	std::stringstream	ss;
 
 	//skip first line
 	std::getline(_inputFile, line);
@@ -96,6 +103,9 @@ void BitcoinExchange::lunch(void)
 			std::cerr << "Error: bad input => " << line << std::endl;
 			continue;
 		}
+
+		if (!date.empty() && date[date.size() - 1] == ' ')
+			date.erase(date.size() - 1);
 
 		//check balance size
 		if (ft_atod(balance) < MIN_BLANACE || ft_atod(balance) > MAX_BALANCE)

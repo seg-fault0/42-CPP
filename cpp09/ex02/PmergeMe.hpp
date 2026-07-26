@@ -268,9 +268,7 @@ void PmergeMe<PairContainer, IntContainer>::sort()
 /******************************************/
 
 template <typename PairContainer, typename IntContainer>
-void PmergeMe<PairContainer, IntContainer>::init(
-	int ac,
-	char** av)
+void PmergeMe<PairContainer, IntContainer>::init(int ac, char** av)
 {
 	bool lock = false;
 	std::pair<int, int> pair;

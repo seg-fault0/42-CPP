@@ -21,7 +21,7 @@ static int ft_pow(int n, int p)
 
 	for(int i = 0; i < p; i++)
 		ret *= n;
-	return (n);
+	return (ret);
 }
 
 std::vector<size_t> JacobsthalOrder(size_t size)

@@ -15,21 +15,46 @@ int ft_atoi(const std::string& str)
 	return (static_cast<int>(n));
 }
 
-static int ft_pow(int n, int p)
-{
-	int ret = 1;
-
-	for(int i = 0; i < p; i++)
-		ret *= n;
-	return (ret);
-}
-
 std::vector<size_t> JacobsthalOrder(size_t size)
 {
 	std::vector<size_t> order;
+	std::vector<size_t> jacob;
 
-	for(int i = 0; i < size; i++)
-		order.push_back((ft_pow(2, i) - ft_pow(-1, i)) / 3);
-	
+	if (size == 0)
+		return (order);
+
+	jacob.push_back(1);
+
+	size_t j0 = 0;
+	size_t j1 = 1;
+
+	while (true)
+	{
+		size_t next = j1 + (2 * j0);
+
+		if (next > size)
+			break;
+
+		jacob.push_back(next);
+
+		j0 = j1;
+		j1 = next;
+	}
+
+	size_t previous = 0;
+
+	for (size_t i = 0; i < jacob.size(); i++)
+	{
+		size_t current = jacob[i];
+
+		for (size_t k = current; k > previous; --k)
+			order.push_back(k - 1);
+
+		previous = current;
+	}
+
+	for (size_t k = size; k > previous; --k)
+		order.push_back(k - 1);
+
 	return (order);
 }

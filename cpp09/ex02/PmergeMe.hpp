@@ -118,8 +118,7 @@ void PmergeMe<PairContainer, IntContainer>::binaryInsert(int value)
 }
 
 template <typename PairContainer, typename IntContainer>
-void PmergeMe<PairContainer, IntContainer>::insertPendElements(
-	const std::vector<size_t>& order)
+void PmergeMe<PairContainer, IntContainer>::insertPendElements(const std::vector<size_t>& order)
 {
 	for (size_t i = 0; i < order.size(); i++)
 		binaryInsert(_pend[order[i]]);

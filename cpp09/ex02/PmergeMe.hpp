@@ -17,14 +17,13 @@ class PmergeMe
 		PairContainer	_elements;
 		IntContainer	_chain;
 		IntContainer	_pend;
-		bool			_hasStraggler;
 		int				_straggler;
 		std::string		_before;
 		double			_time;
 
 	private:
-		void	binaryInsert(int value);
-		void	insertPendElements(const std::vector<size_t>& order);
+		void	binaryInsert(int value, int end);
+		void	insertPendElements();
 		void	buildMainChain(void);
 		void	merge(size_t left, size_t mid, size_t right);
 		void	mergeSort(size_t left, size_t right);
@@ -63,7 +62,6 @@ class PmergeMe
 /***********     HELPERS     **************/
 /******************************************/
 
-std::vector<size_t>	JacobsthalOrder(size_t size);
 int					ft_atoi(const std::string& str);
 
 /******************************************/
@@ -71,7 +69,7 @@ int					ft_atoi(const std::string& str);
 /******************************************/
 
 template <typename PairContainer, typename IntContainer>
-PmergeMe<PairContainer, IntContainer>::PmergeMe() : _hasStraggler(false), _straggler(0) {}
+PmergeMe<PairContainer, IntContainer>::PmergeMe() : _straggler(-1) {}
 
 template <typename PairContainer, typename IntContainer>
 PmergeMe<PairContainer, IntContainer>::~PmergeMe() {}
@@ -87,7 +85,6 @@ PmergeMe<PairContainer, IntContainer>& PmergeMe<PairContainer, IntContainer>::op
 		_elements = other._elements;
 		_chain = other._chain;
 		_pend = other._pend;
-		_hasStraggler = other._hasStraggler;
 		_straggler = other._straggler;
 		_before = other._before;
 		_time = other._time;
@@ -100,10 +97,10 @@ PmergeMe<PairContainer, IntContainer>& PmergeMe<PairContainer, IntContainer>::op
 /******************************************/
 
 template <typename PairContainer, typename IntContainer>
-void PmergeMe<PairContainer, IntContainer>::binaryInsert(int value)
+void PmergeMe<PairContainer, IntContainer>::binaryInsert(int value, int end)
 {
 	size_t left = 0;
-	size_t right = _chain.size();
+	size_t right = end;
 
 	while (left < right)
 	{
@@ -118,13 +115,37 @@ void PmergeMe<PairContainer, IntContainer>::binaryInsert(int value)
 }
 
 template <typename PairContainer, typename IntContainer>
-void PmergeMe<PairContainer, IntContainer>::insertPendElements(const std::vector<size_t>& order)
+void PmergeMe<PairContainer, IntContainer>::insertPendElements()
 {
-	for (size_t i = 0; i < order.size(); i++)
-		binaryInsert(_pend[order[i]]);
+	int jacob[] = {0, 1, 3, 5, 11, 21, 43, 85, 171, 341, 683, 1365, 2731, 5461, 10923, 21845, 43691, 87381, 174763, 349525};
+	int jacob_size = sizeof(jacob) / sizeof(jacob[0]);
 
-	if (_hasStraggler)
-		binaryInsert(_straggler);
+	for (size_t jacob_i = 0; jacob_i + 1 < jacob_size; jacob_i++)
+	{
+		size_t group_start = jacob[jacob_i];
+		size_t group_end = jacob[jacob_i + 1];
+
+		if (group_start >= _pend.size())
+			break;
+
+		if (group_end > _pend.size())
+			group_end = _pend.size();
+
+		while (group_end > group_start)
+		{
+			size_t pend_index = --group_end;
+			int b = _elements[pend_index + 1].second;
+
+			size_t b_pos = 0;
+			while (b_pos < _chain.size() && _chain[b_pos] != b)
+				b_pos++;
+
+			binaryInsert(_pend[pend_index], b_pos);
+		}
+	}
+
+	if (_straggler != -1)
+		binaryInsert(_straggler, _chain.size());
 }
 
 template <typename PairContainer, typename IntContainer>
@@ -208,7 +229,7 @@ void PmergeMe<PairContainer, IntContainer>::sort()
 		mergeSort(0, _elements.size());
 
 	buildMainChain();
-	insertPendElements(JacobsthalOrder(_pend.size()));
+	insertPendElements();
 }
 
 /******************************************/
@@ -234,15 +255,13 @@ void PmergeMe<PairContainer, IntContainer>::init(int ac, char** av)
 			if (!lock)
 			{
 				pair.first = ft_atoi(line);
-				_before += line;
-				_before += " ";
+				_before += line + " ";
 				lock = true;
 			}
 			else
 			{
 				pair.second = ft_atoi(line);
-				_before += line;
-				_before += " ";
+				_before += line + " ";
 				_elements.push_back(pair);
 				lock = false;
 			}
@@ -250,10 +269,7 @@ void PmergeMe<PairContainer, IntContainer>::init(int ac, char** av)
 	}
 
 	if (lock)
-	{
-		_hasStraggler = true;
 		_straggler = pair.first;
-	}
 }
 
 template <typename PairContainer, typename IntContainer>

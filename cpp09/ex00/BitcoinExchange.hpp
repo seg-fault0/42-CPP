@@ -33,10 +33,21 @@ class BitcoinExchange
 	
 	//methods
 		void	init(const std::string& file);
+		void	lineHandler(std::string& line);
 		void	lunch(void);
 	
 	//exceptiom
 		class FileNotOpen : public std::exception
+		{
+			const char* what() const throw();
+		};
+
+		class InvalidDate : public std::exception
+		{
+			const char* what() const throw();
+		};
+
+		class InvalidFirstLine : public std::exception
 		{
 			const char* what() const throw();
 		};

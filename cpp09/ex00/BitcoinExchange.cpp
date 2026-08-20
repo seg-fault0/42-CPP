@@ -79,9 +79,8 @@ BitcoinExchange::BitcoinExchange(const BitcoinExchange& other) { *this = other; 
 BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& other) 
 {
 	if (this != &other)
-	{
-        _dataBaseMap = other._dataBaseMap;
-	}
+		_dataBaseMap = other._dataBaseMap;
+
 	return (*this);
 }
 

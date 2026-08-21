@@ -7,7 +7,7 @@ HEADER = PmergeMe.hpp	\
 NAME = PmergeMe
 
 CC = c++
-FLAGS = -std=c++98 #-Wall -Wextra -Werror
+FLAGS = -std=c++98 -Wall -Wextra -Werror
 OBJS = $(SRCS:.cpp=.o)
 
 all: $(NAME)

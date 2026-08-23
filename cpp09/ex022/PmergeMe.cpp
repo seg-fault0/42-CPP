@@ -23,7 +23,7 @@ void print(std::string str, const std::vector<int>& vec)
 	std::cout << std::endl;
 }
 
-double getDur(std::clock_t start)
+double getDuration(std::clock_t start)
 {
 	return (static_cast<double>(std::clock() - start) / CLOCKS_PER_SEC * 1000000); 
 }

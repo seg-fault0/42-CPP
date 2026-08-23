@@ -16,4 +16,4 @@ typedef struct S_Pair
 
 int					ft_atoi(const std::string& str);
 void				print(std::string str, const std::vector<int>& vec);
-double				getDur(std::clock_t start);
+double				getDuration(std::clock_t start);

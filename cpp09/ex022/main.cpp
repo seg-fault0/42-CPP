@@ -1,5 +1,9 @@
 #include "PmergeMe.hpp"
 
+/******************************************************/
+/*****************       PARSER     *******************/
+/******************************************************/
+
 template <typename IntContainer>
 IntContainer ft_parse(int ac, char** av)
 {
@@ -21,8 +25,12 @@ IntContainer ft_parse(int ac, char** av)
 	return(parsed);
 }
 
-template <typename PairContainer, typename IntContaner>
-PairContainer makeSortPairs(IntContaner input)
+/******************************************************/
+/***************       Pair Maker     *****************/
+/******************************************************/
+
+template <typename PairContainer, typename IntContainer>
+PairContainer makeSortPairs(IntContainer input)
 {
 	PairContainer pairs;
 
@@ -38,8 +46,12 @@ PairContainer makeSortPairs(IntContaner input)
 	return (pairs);
 }
 
-template <typename IntContaner>
-void binaryInsert(IntContaner& chain, int value, int end)
+/******************************************************/
+/************       Insert Algorithm      *************/
+/******************************************************/
+
+template <typename IntContainer>
+void binaryInsert(IntContainer& chain, int value, int end)
 {
 	size_t left = 0;
 	size_t right = end;
@@ -59,39 +71,41 @@ void binaryInsert(IntContaner& chain, int value, int end)
 template <typename IntContainer>
 size_t lowerBound(const IntContainer& result, int value)
 {
-    size_t left = 0;
-    size_t right = result.size();
+	size_t left = 0;
+	size_t right = result.size();
 
-    while (left < right)
-    {
-        size_t mid = left + (right - left) / 2;
+	while (left < right)
+	{
+		size_t mid = left + (right - left) / 2;
 
-        if (result[mid] < value)
-            left = mid + 1;
-        else
-            right = mid;
-    }
+		if (result[mid] < value)
+			left = mid + 1;
+		else
+			right = mid;
+	}
 
-    return left;
+	return left;
 }
 
 template <typename PairContainer, typename IntContainer>
 size_t getEnd(const PairContainer& pairs, const IntContainer& result, int pend)
 {
-    for (size_t i = 0; i < pairs.size(); i++)
-    {
-        if (pairs[i].small == pend)
-            return lowerBound(result, pairs[i].big);
-    }
-    return result.size();
+	for (size_t i = 0; i < pairs.size(); i++)
+	{
+		if (pairs[i].small == pend)
+			return lowerBound(result, pairs[i].big);
+	}
+	return result.size();
 }
 
-template <typename PairContainer, typename IntContaner>
-IntContaner insertPend(IntContaner main, IntContaner pend, int stragller, PairContainer pairs)
+template <typename PairContainer, typename IntContainer>
+IntContainer insertPend(IntContainer main, IntContainer pend, int stragller, PairContainer pairs)
 {
-	IntContaner result(main);
+	IntContainer result(main);
 
-	int jacob[] = {0, 1, 3, 5, 11, 21, 43, 85, 171, 341, 683, 1365, 2731, 5461, 10923, 21845, 43691, 87381, 174763, 349525};
+	int jacob[] = {0, 1, 3, 5, 11, 21, 43, 85, 171, 341, 683, 1365, 2731, 5461, 10923, 21845, 43691, 87381, 174763, 349525, 699051, 
+		1398101, 2796203, 5592405, 11184811, 22369621, 44739243, 89478485, 178956971, 357913941, 715827883, 1431655765};
+
 	size_t jacob_size = sizeof(jacob) / sizeof(jacob[0]);
 
 	for (size_t jacob_i = 0; jacob_i + 1 < jacob_size; jacob_i++)
@@ -111,21 +125,20 @@ IntContaner insertPend(IntContaner main, IntContaner pend, int stragller, PairCo
 
 			size_t end = getEnd(pairs, result, pend[idx]);
 			binaryInsert(result, pend[idx], end);
-
-			// typename IntContaner::iterator pos = std::lower_bound(result.begin(), result.end(),  pend[idx]);
-			// result.insert(pos,  pend[idx]);
 		}
 	}
 	if (stragller != -1)
-	{
-		typename IntContaner::iterator pos = std::lower_bound(result.begin(), result.end(),  stragller);
-		result.insert(pos,  stragller);
-	}
+		binaryInsert(result, stragller, result.size());
+
 	return(result);
 }
 
-template <typename PairContainer, typename IntContaner>
-IntContaner sort(IntContaner input)
+/******************************************************/
+/******************       Sort     ********************/
+/******************************************************/
+
+template <typename PairContainer, typename IntContainer>
+IntContainer sort(IntContainer input)
 {
 	if (input.size() <= 1)
 		return (input);
@@ -139,18 +152,22 @@ IntContaner sort(IntContaner input)
 	
 	PairContainer pairs = makeSortPairs<PairContainer>(input);
 
-	IntContaner main, pend;
+	IntContainer main, pend;
 	for(size_t i = 0; i < pairs.size(); i++)
 	{
 		main.push_back(pairs[i].big);
 		pend.push_back(pairs[i].small);
 	}
 
-	main = sort<PairContainer, IntContaner>(main);
+	main = sort<PairContainer, IntContainer>(main);
 	main = insertPend(main, pend, stragler, pairs);
 
 	return  (main);
 }
+
+/******************************************************/
+/******************       Main     ********************/
+/******************************************************/
 
 int main(int ac, char** av)
 { 
@@ -164,11 +181,11 @@ int main(int ac, char** av)
 
 	std::clock_t vec_start = std::clock();
 	vec = sort<std::vector<Pair> >(vec);
-	double vec_dur = getDur(vec_start);
+	double vec_dur = getDuration(vec_start);
 
 	std::clock_t deq_start = std::clock();
 	deq = sort<std::deque<Pair> >(deq);
-	double deq_dur = getDur(deq_start);
+	double deq_dur = getDuration(deq_start);
 
 	print("After  : ", vec);
 	std::cout << "Time to process a range of " << vec.size() << " elements with std::[vector] : " << vec_dur << " us" << std::endl;

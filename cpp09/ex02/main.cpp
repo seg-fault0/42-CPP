@@ -5,24 +5,28 @@
 /******************************************************/
 
 template <typename IntContainer>
-IntContainer ft_parse(int ac, char** av)
+IntContainer ft_parse(int ac, char **av)
 {
-	IntContainer	parsed;
+	IntContainer parsed;
 
-	for (int i = 1; i < ac; i++)
+	for (int i = 1; i < ac; ++i)
 	{
 		std::stringstream ss(av[i]);
-		std::string line;
+		long value;
 
-		while (std::getline(ss, line, ' '))
+		while (ss >> value)
 		{
-			if (line.empty())
-				continue;
-			else
-				parsed.push_back(ft_atoi(line));
+			if (value < 0 || value > INT_MAX)
+				throw std::runtime_error("Invalid number");
+
+			parsed.push_back(static_cast<int>(value));
 		}
+
+		if (!ss.eof())
+			throw std::runtime_error("Invalid input");
 	}
-	return(parsed);
+
+	return (parsed);
 }
 
 /******************************************************/
@@ -36,9 +40,7 @@ PairContainer makeSortPairs(IntContainer input)
 
 	for (size_t i = 0; i < input.size(); i += 2)
 	{
-		Pair p;
-
-		if (input[i] > input[i + 1])
+			if (input[i] > input[i + 1])
 			pairs.push_back((Pair){input[i], input[i + 1]});
 		else
 			pairs.push_back((Pair){input[i + 1], input[i]});
@@ -173,21 +175,28 @@ int main(int ac, char** av)
 { 
 	if (ac <= 1)
 		return (std::cerr << "Error : usage : ./PmergeMe <args>\n", 1);
+
+	try
+	{
+		std::vector<int> vec = ft_parse<std::vector<int> > (ac, av);
+		std::deque<int> deq = ft_parse<std::deque<int> > (ac, av);
+
+		print("Before : ", vec);	
+
+		std::clock_t vec_start = std::clock();
+		vec = sort<std::vector<Pair> >(vec);
+		double vec_dur = getDuration(vec_start);
 	
-	std::vector<int> vec = ft_parse<std::vector<int> > (ac, av);
-	std::deque<int> deq = ft_parse<std::deque<int> > (ac, av);
-
-	print("Before : ", vec);	
-
-	std::clock_t vec_start = std::clock();
-	vec = sort<std::vector<Pair> >(vec);
-	double vec_dur = getDuration(vec_start);
-
-	std::clock_t deq_start = std::clock();
-	deq = sort<std::deque<Pair> >(deq);
-	double deq_dur = getDuration(deq_start);
-
-	print("After  : ", vec);
-	std::cout << "Time to process a range of " << vec.size() << " elements with std::[vector] : " << vec_dur << " us" << std::endl;
-	std::cout << "Time to process a range of " << vec.size() << " elements with std::[deque] : " << deq_dur << " us" << std::endl;
+		std::clock_t deq_start = std::clock();
+		deq = sort<std::deque<Pair> >(deq);
+		double deq_dur = getDuration(deq_start);
+	
+		print("After  : ", vec);
+		std::cout << "Time to process a range of " << vec.size() << " elements with std::[vector] : " << vec_dur << " us" << std::endl;
+		std::cout << "Time to process a range of " << vec.size() << " elements with std::[deque] : " << deq_dur << " us" << std::endl;
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
 }

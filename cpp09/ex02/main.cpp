@@ -34,7 +34,7 @@ IntContainer ft_parse(int ac, char **av)
 /******************************************************/
 
 template <typename PairContainer, typename IntContainer>
-PairContainer makeSortPairs(IntContainer input)
+PairContainer makeSortPairs(const IntContainer& input)
 {
 	PairContainer pairs;
 
@@ -90,18 +90,7 @@ size_t lowerBound(const IntContainer& result, int value)
 }
 
 template <typename PairContainer, typename IntContainer>
-size_t getEnd(const PairContainer& pairs, const IntContainer& result, int pend)
-{
-	for (size_t i = 0; i < pairs.size(); i++)
-	{
-		if (pairs[i].small == pend)
-			return lowerBound(result, pairs[i].big);
-	}
-	return result.size();
-}
-
-template <typename PairContainer, typename IntContainer>
-IntContainer insertPend(IntContainer main, IntContainer pend, int stragller, PairContainer pairs)
+IntContainer insertPend(const IntContainer& main, const IntContainer& pend, int stragller, const PairContainer& pairs)
 {
 	IntContainer result(main);
 
@@ -125,7 +114,7 @@ IntContainer insertPend(IntContainer main, IntContainer pend, int stragller, Pai
 		{
 			size_t idx = --group_end;
 
-			size_t end = getEnd(pairs, result, pend[idx]);
+			size_t end = lowerBound(result, pairs[idx].big);
 			binaryInsert(result, pend[idx], end);
 		}
 	}

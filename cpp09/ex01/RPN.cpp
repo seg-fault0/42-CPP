@@ -64,29 +64,31 @@ RPN& RPN::operator=(const RPN& other)
 /***********      METHODS    **************/
 /******************************************/
 
-void	RPN::init(const std::string& arg)
+void RPN::init(const std::string& arg)
 {
-	bool	lock = false;
-
 	if (arg.empty())
-		throw(ERROR());
+		throw ERROR();
 
-	for(size_t i = 0; i < arg.length(); i++)
+	std::stringstream ss(arg);
+	std::string token;
+
+	while (ss >> token)
 	{
-		if (!lock && (std::isdigit(arg[i]) || isop(arg[i])))
-			lock = true;
-		else if (lock && arg[i] == ' ')
-			lock = false;
-		else
-			throw (ERROR());
+		if (token.length() != 1)
+			throw ERROR();
+
+		if (!std::isdigit(static_cast<unsigned char>(token[0])) && !isop(token[0]))
+			throw ERROR();
+
+		_expression << token[0] << " ";
 	}
-	_expression << arg;
 }
 
 void	RPN::lunch(void)
 {
 	std::string	line;
 	int			a, b;
+	long long		result;
 
 	while (std::getline(_expression, line, ' '))
 	{
@@ -96,19 +98,23 @@ void	RPN::lunch(void)
 		{
 			a = popVal(_stack);
 			b = popVal(_stack);
+			result = 0;
 
 			if (line == "+")
-				_stack.push(b + a);
+				result = static_cast<long long>(b) + a;
 			else if (line == "-")
-				_stack.push(b - a);
+				result = static_cast<long long>(b) - a;
 			else if (line == "*")
-				_stack.push(b * a);
+				result = static_cast<long long>(b) * a;
 			else if (line == "/")
 			{
 				if (a == 0)
 					throw (ERROR());
-				_stack.push(b / a);
+				result = static_cast<long long>(b) / a;
 			}
+			if (result < INT_MIN || result > INT_MAX)
+				throw ERROR();
+			_stack.push(static_cast<int> (result));
 		}
 	}
 

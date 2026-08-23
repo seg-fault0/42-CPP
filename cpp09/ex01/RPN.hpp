@@ -7,6 +7,7 @@
 # include <stack>
 # include <sstream>
 # include <string>
+# include <climits>
 
 //macros
 # define ull_t unsigned long long

@@ -4,7 +4,7 @@ int main(int ac, char **av)
 {
 	if (ac != 2)
 	{
-		std::cerr << "usage : ./btc <inputFile.txt>\n";
+		std::cerr << "usage : ./btc <inputFile>\n";
 		return(1);
 	}
 

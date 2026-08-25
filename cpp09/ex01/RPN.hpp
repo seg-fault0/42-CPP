@@ -9,9 +9,6 @@
 # include <string>
 # include <climits>
 
-//macros
-# define ull_t unsigned long long
-
 //class
 class RPN
 {
